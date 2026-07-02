@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="TABito - Discover Itoshima's 50 hidden local gems. Mobile-optimized travel guide for inbound tourists.">
+  <title>TABito - Itoshima Hidden Gems</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --sea: #0e7490;
+      --sea-light: #ecfeff;
+      --sea-mid: #cffafe;
+      --forest: #15803d;
+      --forest-light: #f0fdf4;
+      --earth-50: #fafaf9;
+      --earth-100: #f5f5f4;
+      --earth-200: #e7e5e4;
+      --earth-300: #d6d3d1;
+      --earth-800: #292524;
+      --earth-900: #1c1917;
+      --white: #ffffff;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --shadow-card: 0 2px 12px rgba(0,0,0,0.08);
+      --shadow-bottom: 0 -4px 24px rgba(0,0,0,0.12);
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html, body {
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+      background: var(--earth-50);
+      color: var(--earth-800);
+      min-height: 100dvh;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      scroll-behavior: smooth;
+    }
+
+    [v-cloak] { display: none !important; }
+
+    /* ─── HEADER ─────────────────────────────── */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--earth-200);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+      flex-shrink: 0;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--sea), var(--forest));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--sea), var(--forest));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+    }
+
+    .logo-sub {
+      font-size: 9px;
+      color: var(--earth-300);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .lang-toggle {
+      display: flex;
+      gap: 2px;
+      background: var(--earth-100);
+      border-radius: 10px;
+      padding: 3px;
+      flex-shrink: 0;
+    }
+
+    .lang-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      background: none;
+      color: var(--earth-800);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+
+    .lang-btn.active {
+      background: var(--white);
+      color: var(--sea);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    /* ─── HERO ───────────────────────────────── */
+    .hero {
+      background: linear-gradient(150deg, #164e63 0%, #14532d 60%, #1c1917 100%);
+      padding: 28px 16px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(14,116,144,0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(4px);
+      color: #a5f3fc;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 {
+      font-size: 26px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* ─── SORT LABEL BAR ─────────────────────── */
+    .sort-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--earth-200);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--sea);
+      font-weight: 600;
+    }
+
+    .sort-bar .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--sea);
+      animation: pulse 2s infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ─── SPOTS LIST ─────────────────────────── */
+    .spots-container {
+      padding: 12px 12px 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .spot-count-heading {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 4px 8px;
+    }
+
+    .spot-count-heading .count {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--sea);
+      line-height: 1;
+    }
+
+    .spot-count-heading .label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--earth-800);
+    }
+
+    /* ─── SPOT CARD ──────────────────────────── */
+    .spot-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--earth-200);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      transition: transform var(--transition);
+      animation: slideUp 0.3s ease forwards;
+    }
+
+    .spot-card:active {
+      transform: scale(0.985);
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-accent {
+      height: 4px;
+      background: linear-gradient(90deg, var(--sea), var(--forest));
+    }
+
+    .card-body {
+      padding: 14px 14px 12px;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .place-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--sea);
+      background: var(--sea-light);
+      border: 1px solid var(--sea-mid);
+      padding: 4px 9px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .distance-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--earth-800);
+      background: var(--earth-100);
+      border: 1px solid var(--earth-200);
+      padding: 4px 8px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+
+    .card-title-en {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--earth-900);
+      line-height: 1.3;
+      margin-bottom: 2px;
+    }
+
+    .card-title-ja {
+      font-size: 11px;
+      color: var(--earth-300);
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: var(--earth-800);
+      line-height: 1.65;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .card-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+
+    .feat-chip {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--earth-800);
+      background: var(--earth-100);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--earth-200);
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .feat-chip:active {
+      background: var(--forest-light);
+      color: var(--forest);
+    }
+
+    .map-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      background: var(--earth-800);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 12px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: background var(--transition);
+      font-family: inherit;
+    }
+
+    .map-btn:active {
+      background: var(--sea);
+    }
+
+    /* ─── EMPTY STATE ────────────────────────── */
+    .empty-state {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--earth-200);
+      padding: 48px 24px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      width: 56px;
+      height: 56px;
+      background: #fef2f2;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin: 0 auto 16px;
+    }
+
+    .empty-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .empty-desc {
+      font-size: 13px;
+      color: var(--earth-300);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      white-space: pre-line;
+    }
+
+    .empty-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--sea), #0891b2);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 12px 24px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* ─── BOTTOM BAR (Filter Trigger) ─────────── */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 60;
+      background: var(--white);
+      border-top: 1px solid var(--earth-200);
+      box-shadow: var(--shadow-bottom);
+      padding: 12px 16px max(12px, env(safe-area-inset-bottom));
+      display: flex;
+      gap: 10px;
+    }
+
+    .filter-trigger-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--sea), #0891b2);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity var(--transition);
+      position: relative;
+    }
+
+    .filter-trigger-btn:active {
+      opacity: 0.85;
+    }
+
+    .filter-count-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .reset-bar-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--earth-100);
+      border: 1px solid var(--earth-200);
+      color: var(--earth-800);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 14px 16px;
+      border-radius: 14px;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    /* ─── BOTTOM SHEET ───────────────────────── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(28,25,23,0.55);
+      z-index: 70;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .bottom-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 80;
+      background: var(--white);
+      border-radius: 24px 24px 0 0;
+      max-height: 90dvh;
+      display: flex;
+      flex-direction: column;
+      animation: slideUp2 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    @keyframes slideUp2 {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .sheet-handle {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      padding: 12px 16px 4px;
+    }
+
+    .sheet-handle-bar {
+      width: 36px;
+      height: 4px;
+      background: var(--earth-200);
+      border-radius: 2px;
+    }
+
+    .sheet-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px 12px;
+      border-bottom: 1px solid var(--earth-100);
+    }
+
+    .sheet-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--earth-900);
+    }
+
+    .sheet-close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--earth-100);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: var(--earth-800);
+    }
+
+    .sheet-body {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      flex: 1;
+      padding: 16px;
+      padding-bottom: 24px;
+    }
+
+    .filter-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--earth-800);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .filter-section-label .sel-count {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--sea);
+      background: var(--sea-light);
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    /* Place tags: 2-column grid */
+    .place-tags-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+      margin-bottom: 20px;
+    }
+
+    .place-tag-btn {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 10px 11px;
+      border-radius: 12px;
+      border: 1.5px solid var(--earth-200);
+      background: var(--earth-100);
+      color: var(--earth-800);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      line-height: 1.35;
+      min-height: 60px;
+      transition: all var(--transition);
+      gap: 6px;
+    }
+
+    .place-tag-btn.active {
+      background: linear-gradient(135deg, var(--sea), #0891b2);
+      border-color: var(--sea);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(14,116,144,0.3);
+    }
+
+    .place-tag-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .tag-check {
+      font-size: 9px;
+      font-weight: 700;
+      opacity: 0.85;
+    }
+
+    .tag-count-pill {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 5px;
+      background: rgba(0,0,0,0.08);
+    }
+
+    .place-tag-btn.active .tag-count-pill {
+      background: rgba(255,255,255,0.25);
+    }
+
+    /* Feature tags: wrapped chips */
+    .feature-tags-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+
+    .feature-tag-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--earth-200);
+      background: var(--earth-100);
+      color: var(--earth-800);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all var(--transition);
+    }
+
+    .feature-tag-btn.active {
+      background: linear-gradient(135deg, var(--forest), #16a34a);
+      border-color: var(--forest);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(21,128,61,0.3);
+    }
+
+    .feature-tag-btn .fcount {
+      font-size: 9px;
+      font-weight: 800;
+      background: rgba(0,0,0,0.08);
+      padding: 1px 5px;
+      border-radius: 5px;
+    }
+
+    .feature-tag-btn.active .fcount {
+      background: rgba(255,255,255,0.25);
+    }
+
+    /* Active filter chips display */
+    .active-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .active-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 5px 9px;
+      border-radius: 8px;
+    }
+
+    .active-chip.place-chip-active {
+      background: var(--sea-light);
+      color: var(--sea);
+      border: 1px solid var(--sea-mid);
+    }
+
+    .active-chip.feature-chip-active {
+      background: var(--forest-light);
+      color: var(--forest);
+      border: 1px solid #bbf7d0;
+    }
+
+    .chip-remove {
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      opacity: 0.7;
+      background: none;
+      border: none;
+      color: inherit;
+      font-family: inherit;
+      line-height: 1;
+    }
+
+    /* Apply button in sheet */
+    .sheet-footer {
+      flex-shrink: 0;
+      padding: 12px 16px max(16px, env(safe-area-inset-bottom));
+      border-top: 1px solid var(--earth-100);
+    }
+
+    .apply-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--sea), #0891b2);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 15px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    /* Separator between sections */
+    .sheet-divider {
+      height: 1px;
+      background: var(--earth-100);
+      margin: 4px 0 16px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app" v-cloak>
+
+  <!-- ── Header ── -->
+  <header class="header">
+    <a href="#" class="logo-wrap" @click.prevent="resetAll">
+      <div class="logo-icon">🏝️</div>
+      <div>
+        <div class="logo-text">TABito</div>
+        <div class="logo-sub">Inbound Guide</div>
+      </div>
+    </a>
+    <div class="lang-toggle">
+      <button class="lang-btn" :class="{ active: lang === 'en' }" @click="setLanguage('en')">EN</button>
+      <button class="lang-btn" :class="{ active: lang === 'ja' }" @click="setLanguage('ja')">JA</button>
+    </div>
+  </header>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero-badge">✨ {{ lang === 'en' ? 'Fukuoka, Japan · Secret Spots' : '福岡県糸島市・穴場スポット' }}</div>
+    <h1>{{ t('title') }}<br><span style="font-size:18px; font-weight:400; opacity:0.8;">Hidden Gems</span></h1>
+    <p>{{ t('subtitle') }}</p>
+  </section>
+
+  <!-- ── Sort Label ── -->
+  <div class="sort-bar">
+    <div class="dot"></div>
+    {{ lang === 'en' ? 'Sorted by distance from Meoto Iwa (Sakurai Futamigaura)' : '夫婦岩（桜井二見ヶ浦）から近い順に表示中' }}
+  </div>
+
+  <!-- ── Spots List ── -->
+  <main class="spots-container">
+
+    <!-- Count heading -->
+    <div class="spot-count-heading">
+      <span class="count">{{ filteredSpots.length }}</span>
+      <span class="label">{{ t('spotsFound') }}</span>
+    </div>
+
+    <!-- Spot cards -->
+    <template v-if="filteredSpots.length > 0">
+      <div class="spot-card" v-for="(spot, i) in filteredSpots" :key="spot.id" :style="`animation-delay: ${i * 0.04}s`">
+        <div class="card-accent"></div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="place-chip" @click="togglePlace(spot.place); sheetOpen = true">
+              📍 {{ getTagTranslation(spot.place) }}
+            </span>
+            <span class="distance-chip">🚗 {{ spot.distance.toFixed(1) }} km</span>
+          </div>
+          <div class="card-title-en">{{ lang === 'en' ? spot.name.en : spot.name.ja }}</div>
+          <div class="card-title-ja">{{ lang === 'en' ? spot.name.ja : spot.name.en }}</div>
+          <p class="card-desc">{{ lang === 'en' ? spot.desc.en : spot.desc.ja }}</p>
+          <div class="card-features">
+            <span
+              class="feat-chip"
+              v-for="feat in spot.features"
+              :key="feat"
+              @click="toggleFeature(feat)"
+            >🌿 {{ getTagTranslation(feat) }}</span>
+          </div>
+          <a :href="getGoogleMapsUrl(spot)" target="_blank" class="map-btn">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+            {{ t('mapBtn') }}
+          </a>
+        </div>
+      </div>
+    </template>
+
+    <!-- Empty state -->
+    <div class="empty-state" v-else>
+      <div class="empty-icon">🔍</div>
+      <div class="empty-title">{{ lang === 'en' ? 'No Matching Spots' : '一致するスポットがありません' }}</div>
+      <p class="empty-desc">{{ t('noResults') }}</p>
+      <button class="empty-btn" @click="resetAll">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+        {{ t('resetFilters') }}
+      </button>
+    </div>
+
+  </main>
+
+  <!-- ── Bottom Bar ── -->
+  <div class="bottom-bar">
+    <button class="filter-trigger-btn" @click="sheetOpen = true">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"/></svg>
+      {{ lang === 'en' ? 'Filters' : 'しぼり込む' }}
+      <span class="filter-count-badge" v-if="totalSelected > 0">{{ totalSelected }}</span>
+    </button>
+    <button class="reset-bar-btn" v-if="totalSelected > 0" @click="resetAll">
+      {{ lang === 'en' ? 'Clear' : 'クリア' }}
+    </button>
+  </div>
+
+  <!-- ── Bottom Sheet Overlay ── -->
+  <div class="overlay" v-if="sheetOpen" @click="sheetOpen = false"></div>
+
+  <!-- ── Bottom Sheet ── -->
+  <div class="bottom-sheet" v-if="sheetOpen">
+    <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+    <div class="sheet-header">
+      <div class="sheet-title">{{ lang === 'en' ? 'Filter & Discover' : '絞り込み検索' }}</div>
+      <button class="sheet-close-btn" @click="sheetOpen = false">✕</button>
+    </div>
+
+    <div class="sheet-body">
+
+      <!-- Active filter chips -->
+      <template v-if="selectedPlaces.length > 0 || selectedFeatures.length > 0">
+        <div class="active-chips">
+          <span class="active-chip place-chip-active" v-for="p in selectedPlaces" :key="p">
+            📍 {{ getTagTranslation(p) }}
+            <button class="chip-remove" @click="togglePlace(p)">×</button>
+          </span>
+          <span class="active-chip feature-chip-active" v-for="f in selectedFeatures" :key="f">
+            🌿 {{ getTagTranslation(f) }}
+            <button class="chip-remove" @click="toggleFeature(f)">×</button>
+          </span>
+        </div>
+        <div class="sheet-divider"></div>
+      </template>
+
+      <!-- Place tags section -->
+      <div class="filter-section-label">
+        <span>📍 {{ t('whereToGo') }}</span>
+        <span class="sel-count" v-if="selectedPlaces.length > 0">{{ selectedPlaces.length }} {{ lang === 'en' ? 'Selected (OR)' : '選択中' }}</span>
+      </div>
+      <div class="place-tags-grid">
+        <button
+          class="place-tag-btn"
+          :class="{ active: selectedPlaces.includes(ptag.ja) }"
+          v-for="ptag in placeTags"
+          :key="ptag.ja"
+          @click="togglePlace(ptag.ja)"
+        >
+          <span>{{ getTagName(ptag) }}</span>
+          <div class="place-tag-footer">
+            <span class="tag-check">{{ selectedPlaces.includes(ptag.ja) ? '✓ ON' : '' }}</span>
+            <span class="tag-count-pill">{{ getPreviewCountForPlace(ptag.ja) }}</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="sheet-divider"></div>
+
+      <!-- Feature tags section -->
+      <div class="filter-section-label">
+        <span>🌿 {{ t('whatToExperience') }}</span>
+        <span class="sel-count" v-if="selectedFeatures.length > 0">{{ selectedFeatures.length }} {{ lang === 'en' ? 'Selected (OR)' : '選択中' }}</span>
+      </div>
+      <div class="feature-tags-wrap">
+        <button
+          class="feature-tag-btn"
+          :class="{ active: selectedFeatures.includes(ftag.ja) }"
+          v-for="ftag in featureTags"
+          :key="ftag.ja"
+          @click="toggleFeature(ftag.ja)"
+        >
+          {{ getTagName(ftag) }}
+          <span class="fcount">{{ getPreviewCountForFeature(ftag.ja) }}</span>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="sheet-footer">
+      <button class="apply-btn" @click="sheetOpen = false">
+        {{ filteredSpots.length }} {{ lang === 'en' ? 'spots — Show Results' : '件を表示する' }} →
+      </button>
+    </div>
+  </div>
+
+</div><!-- /#app -->
+
+<script>
+  const tagMappings = {
+    "カキ小屋": "Oyster Huts", "古民家カフェ・レストラン": "Traditional House Cafes",
+    "クラフト・陶芸工房": "Artisan & Pottery Workshops", "滝・渓谷": "Waterfalls & Gorges",
+    "展望台・山頂": "Viewpoints & Summits", "歴史スポット・古墳": "Historical Sites & Tumuli",
+    "地元の直売所・道の駅": "Local Farmer's Markets", "隠れ家ビーチ・海岸": "Hidden Beaches",
+    "ベーカリー・パン屋": "Local Bakeries", "居酒屋・ローカル食堂": "Izakaya & Local Diners",
+    "キャンプ・グランピング場": "Campsites & Glamping", "フルーツ農園・狩り": "Fruit Farms",
+    "神社・寺院": "Shrines & Temples", "バーベキュー場": "BBQ Spots",
+    "お土産・セレクトショップ": "Souvenir & Craft Shops", "コーヒースタンド・焙煎所": "Coffee Roasters",
+    "ジェラート・スイーツ店": "Gelato & Sweet Shops", "ハイキング・散策コース": "Hiking Trails",
+    "サンセットスポット": "Sunset Viewpoints", "銭湯・日帰り温泉": "Hot Springs & Public Baths",
+    "海が見える": "Ocean View", "混雑が少ない": "Off the Beaten Path / Quiet",
+    "英語メニュー・対応あり": "English Friendly", "キャッシュレス決済OK": "Credit Card / Cashless",
+    "写真映えする": "Photogenic / Insta-worthy", "子供連れにいい": "Kid-Friendly",
+    "テラス席・屋外あり": "Outdoor Seating", "レンタサイクルで行ける": "Accessible by Bicycle",
+    "地元の人と交流できる": "Meet the Locals", "伝統文化を体験できる": "Cultural Experience",
+    "ヴィーガン・ベジタリアン対応": "Vegan / Vegetarian Options", "ハラール対応": "Halal Friendly",
+    "Wi-Fi・電源あり": "Wi-Fi & Power Outlets", "駐車場あり": "Parking Available",
+    "大自然を感じる": "Deep Nature", "朝早くから営業": "Open from Early Morning",
+    "夜遅くまで営業": "Open Late / Nightlife", "ペット同伴OK": "Pet-Friendly",
+    "雨の日でも楽しめる": "Rainy Day Friendly", "入場無料・リーズナブル": "Budget-Friendly / Free Entry"
+  };
+
+  const rawSpots = [
+    { id:1, name:{ja:"神在神社・神在の石",en:"Kamiazari Shrine & Shinseki Rock"}, place:"神社・寺院", features:["大自然を感じる","写真映えする"], distance:10.5, desc:{ja:"572年創建の古社。竹林を数分進むと突如現れる外周約16m、高さ約4mの巨石「神在の石」は、アニメ『鬼滅の刃』の修行シーンに登場する岩に似ているとファンの間で話題になった神秘的なパワースポットです。",en:"Founded in 572, this ancient shrine features a giant sacred rock 'Shinseki' (16m circumference, 4m height) tucked away in a quiet bamboo forest. It gained fame for its striking resemblance to a training scene in a popular anime."}},
+    { id:2, name:{ja:"火山山頂",en:"Mt. Hiyama Summit"}, place:"展望台・山頂", features:["海が見える","写真映えする"], distance:4.5, desc:{ja:"標高250メートルの火山山頂からの眺め。そばにはパラグライダーの発射台があり、糸島の弓状になった海岸線が美しい幣の浜を一望する絶景ポイント。",en:"A hidden viewpoint offering a stunning panoramic sweep of the crescent-shaped Nigi no Hama Beach and Genkai Sea. It is also a launch pad for paragliders and an exceptional sunset spot."}},
+    { id:3, name:{ja:"千寿院の滝",en:"Senjuin Waterfalls"}, place:"滝・渓谷", features:["大自然を感じる","混雑が少ない"], distance:23.5, desc:{ja:"背振雷山県立自然公園内にあります。落差15m、幅6m。夏場でも涼しく、カエデなどの自然に囲まれ新緑も紅葉も美しい非常にマイナスイオンあふれる場所です。",en:"Located in a forested park with legends of fleeing Heike clan refugees, this 15-meter high waterfall cascades down. Surrounded by maple and cedar, it remains cool even in midsummer."}},
+    { id:4, name:{ja:"箱島神社",en:"Hakoshima Shrine"}, place:"神社・寺院", features:["海が見える","写真映えする"], distance:16.5, desc:{ja:"海岸に突き出た小島に立つ小さな鳥居がキュートな神社。愛の神様、愛染明王が祀られていることから女性の参拝客が多く、極上の夕日があります。",en:"A small, picturesque shrine perched on a tiny rocky islet jutting into Kaburi Bay. Dedicated to Aizen Myoo, the deity of love, it is a prominent romantic and photogenic spot."}},
+    { id:5, name:{ja:"姉子の浜（鳴き砂）",en:"Anego no Hama Beach"}, place:"隠れ家ビーチ・海岸", features:["大自然を感じる","子供連れにいい"], distance:24.5, desc:{ja:"玄海国定公園内にある、九州でも珍しい「鳴き砂」の海岸。砂浜を歩くと「キュッキュッ」と美しい音が鳴ることで知られています。",en:"Located in Genkai Quasi-National Park, this rare beach is famous for its 'singing sand' which emits a squeaking sound when walked upon — a sign of pristine, clean conditions."}},
+    { id:6, name:{ja:"釜塚古墳",en:"Kamatsuka Tumulus"}, place:"歴史スポット・古墳", features:["混雑が少ない","伝統文化を体験できる"], distance:19.0, desc:{ja:"5世紀後半に築造された前方後円墳で、国の史跡に指定されています。全長約56メートルの見事な墳丘が残っており、地元の隠れた歴史ロマンに触れられます。",en:"A 56-meter-long keyhole-shaped burial mound dating back to the late 5th century, designated as a National Historic Site. Rare artifacts including gilt-bronze horse trappings were excavated here."}},
+    { id:7, name:{ja:"福ふくの里",en:"Fukufuku no Sato Market"}, place:"地元の直売所・道の駅", features:["駐車場あり","子供連れにいい"], distance:22.5, desc:{ja:"福吉漁港や近隣農家から直送される新鮮な魚介類や採れたて野菜がずらりと並ぶ直売所。春には広大な田畑に黄色い菜の花が一面に咲き誇る絶景が楽しめます。",en:"A vibrant local market offering freshly caught seafood and seasonal organic vegetables. In spring (Feb-Mar), the adjacent fields are carpeted with gorgeous yellow canola flowers."}},
+    { id:8, name:{ja:"糸島くらし×ここのき",en:"Itoshima Kurashi Kokonoki"}, place:"お土産・セレクトショップ", features:["英語メニュー・対応あり","キャッシュレス決済OK"], distance:11.0, desc:{ja:"筑前前原駅の近くにある、糸島在住のクラフト作家が作る木工、陶器、雑貨、地元産無添加食品を専門に扱うショップ。",en:"Located in the shopping arcade of Maehara, this boutique store showcases curated items crafted by local Itoshima artisans, including fine woodwork, pottery, and locally produced foods."}},
+    { id:9, name:{ja:"まむしの湯",en:"Mamushi no Yu Hot Spring"}, place:"銭湯・日帰り温泉", features:["駐車場あり","子供連れにいい"], distance:23.0, desc:{ja:"弘法大師（空海）が湧き出させたという伝説が残る温泉施設。和風の情緒漂う露天風呂、檜風呂、サウナなどで日頃の疲れをゆったり洗い流せます。",en:"A historic bathhouse with legends holding that the spring was summoned by Kobo Daishi. Known as a therapeutic spa with skin-beautifying qualities, featuring various outdoor baths."}},
+    { id:10, name:{ja:"羅以音窯",en:"Rain Kama Pottery"}, place:"クラフト・陶芸工房", features:["伝統文化を体験できる","混雑が少ない"], distance:12.5, desc:{ja:"静かで緑豊かな山麓に建つ美しい陶芸工房。手作業と伝統の薪窯を用いて生まれる器は、使い込むほどに深い味わいを醸し出します。",en:"A charming pottery workshop hidden in the quiet mountain area of Itoshima. Potters create warm, earthy, and functional tableware fired in a traditional wood-burning kiln."}},
+    { id:11, name:{ja:"岐志漁港の豊久丸",en:"Toyohumaru Oyster Hut"}, place:"カキ小屋", features:["駐車場あり","子供連れにいい"], distance:11.5, desc:{ja:"岐志漁港に軒を連ねるカキ小屋の人気店。独自の技術で養殖した濃厚ブランド「みるくがき」は九州カキNo.1決定戦で2年連続1位を獲得。",en:"A top-rated oyster hut in Kishi Port serving famous brand 'Milk Gaki' oysters. Grown using proprietary techniques, these exceptionally creamy oysters are grilled over live charcoal."}},
+    { id:12, name:{ja:"のたり（天然酵母パン）",en:"Notari Bakery"}, place:"ベーカリー・パン屋", features:["混雑が少ない","写真映えする"], distance:2.5, desc:{ja:"櫻井神社近くの里山に佇む、金・土・日のみ営業の古民家パン屋。無添加・無農薬の厳選素材を使い、自家製天然酵母パンを焼き上げています。",en:"A hidden bakery in a renovated traditional house near Sakurai Shrine, open only on weekends. Using homemade natural yeast and organic ingredients, they bake deeply flavorful, additive-free breads."}},
+    { id:13, name:{ja:"筑前前原駅前のローカル居酒屋",en:"Maehara Local Izakaya"}, place:"居酒屋・ローカル食堂", features:["地元の人と交流できる","夜遅くまで営業"], distance:11.0, desc:{ja:"筑前前原駅周辺のノスタルジックな通りに佇む、長年地元に愛される名店。近海の新鮮な刺身、糸島野菜の天ぷら、そして地酒をカウンターで楽しめます。",en:"Tucked away in nostalgic alleys near Maehara Station, these cozy izakayas offer freshly landed local fish from the Genkai Sea paired with regional sake and a friendly local atmosphere."}},
+    { id:14, name:{ja:"糸島ピクニックヴィレッジ",en:"Itoshima Picnic Village"}, place:"キャンプ・グランピング場", features:["海が見える","テラス席・屋外あり"], distance:13.2, desc:{ja:"芥屋海水浴場へ至る潮風が心地よいエリア。人気のカフェや海鮮丼ショップ、レンタサイクルがあり、糸島の海岸線を巡るベース基地に最適です。",en:"A scenic recreation hub adjacent to Keya no Oto Park. Housing popular local eateries and bike rentals, it is the perfect spot to explore the gorgeous coastline."}},
+    { id:15, name:{ja:"白糸の森（体験農園）",en:"Shiraito no Mori"}, place:"フルーツ農園・狩り", features:["子供連れにいい","大自然を感じる"], distance:19.5, desc:{ja:"白糸の滝へ向かう山林に作られた体験型観光農園。無農薬野菜を使ったうどん屋や、森とツリーハウスの景観を楽しみながらスイーツを味わえるカフェがあります。",en:"A forest retreat and organic farm. It features an organic noodle restaurant and a beautiful woodland cafe with unique treehouse-style terrace seats."}},
+    { id:16, name:{ja:"糸島BBQ ＆ CAMP テルセーロ",en:"Itoshima BBQ Tercero"}, place:"バーベキュー場", features:["海が見える","テラス席・屋外あり"], distance:10.0, desc:{ja:"目の前に美しい白砂と青い玄界灘が広がる絶好の立地を誇るバーベキュー施設。手ぶらプランが充実しており、プライベートビーチのような感覚で海風BBQを楽しめます。",en:"An exceptional BBQ and campsite located right on a pristine white-sand beach. Offering comprehensive equipment rentals, guests enjoy hassle-free charcoal BBQs with refreshing sea breeze."}},
+    { id:17, name:{ja:"ペタニコーヒー",en:"Petani Coffee"}, place:"コーヒースタンド・焙煎所", features:["キャッシュレス決済OK","駐車場あり"], distance:6.2, desc:{ja:"志摩小金丸の穏やかな田園風景の中にひっそりと佇む、焙煎へのこだわりを極めた人気のロースター。世界中の上質な生豆を丁寧に自家焙煎しています。",en:"A stylish specialty coffee roastery nestled in the quiet rural landscape of Itoshima. They meticulously roast hand-selected green beans from around the world."}},
+    { id:18, name:{ja:"つまんでご卵 ケーキ工房",en:"Tsumande Goran Cake Shop"}, place:"ジェラート・スイーツ店", features:["子供連れにいい","駐車場あり"], distance:2.2, desc:{ja:"黄身を箸でつまみ上げられる驚異のブランド卵を贅沢に使用した洋菓子店。国産の無農薬小麦粉と添加物を一切排除して焼き上げられた「糸島ロール」は至高の食感です。",en:"A famous patisserie utilizing the ultra-rich regional brand egg. Their signature 'Itoshima Roll' cake is incredibly soft, springy, and rich — must-try Itoshima confectionery."}},
+    { id:19, name:{ja:"白木峠",en:"Shiraki Pass Trail"}, place:"ハイキング・散策コース", features:["大自然を感じる","混雑が少ない"], distance:25.0, desc:{ja:"佐賀県との県境にある豊かな森林に包まれた峠道。観光客が滅多に踏み入れない静寂な古道ルートで、豊かな野鳥のさえずりと川のせせらぎを聞きながら森林浴が楽しめます。",en:"A tranquil hiking trail near the border of Saga Prefecture, perfect for visitors looking to avoid crowds. Offers peaceful forest bathing and gentle trekking guided by birdsong."}},
+    { id:20, name:{ja:"引津湾の夕日スポット",en:"Hikitsu Bay Sunset"}, place:"サンセットスポット", features:["海が見える","混雑が少ない"], distance:12.0, desc:{ja:"可也山と志摩半島に挟まれた穏やかで美しい引津湾。大型観光エリアから少し離れているため混雑せず、空全体を黄金色に染めて沈む夕日を静かに独占できます。",en:"A serene, less-crowded bay in western Itoshima. An exceptional hidden spot for watching the dramatic sunset sink quietly behind the opposing Shima Peninsula."}},
+    { id:21, name:{ja:"杉能舎（浜地酒造）",en:"Suginoya Brewery"}, place:"お土産・セレクトショップ", features:["伝統文化を体験できる","駐車場あり"], distance:7.8, desc:{ja:"創業明治3年の老舗酒蔵。国登録有形文化財の趣ある建物で、受賞歴豊かな日本酒や出来立てのクラフトビールの試飲、焼きピザを麦酒工房テラスで堪能できます。",en:"Established in 1870, this historic sake brewery offers tastings of award-winning sake and regional craft beers. They also run an oyster hut in winter and a bakery year-round."}},
+    { id:22, name:{ja:"坊主滝",en:"Bozu Waterfalls"}, place:"滝・渓谷", features:["大自然を感じる","混雑が少ない"], distance:21.5, desc:{ja:"雷山の中腹、美しいスギの木々が生い茂る渓谷に隠された落差約10mの神聖な滝。白糸の滝と比較して人が極めて少なく、大自然の静謐な息吹を感じられます。",en:"A mystical, secluded waterfall hidden in the deep forest of Mt. Raizan. Far less touristy than Shiraito Falls, offering profound quietude for full nature immersion."}},
+    { id:23, name:{ja:"幣の浜",en:"Nigi no Hama Beach"}, place:"隠れ家ビーチ・海岸", features:["大自然を感じる","混雑が少ない"], distance:9.5, desc:{ja:"芥屋の大門から野北海岸まで約6キロにわたり「日本の白砂青松100選」に選ばれた名勝。観光商業施設が一切なく、手つかずの雄大な砂浜でゆっくり水平線を眺められます。",en:"A breathtaking 6-kilometer stretch of white sand and pine forests. Selected among Japan's Top 100 Beaches, highly popular among surfers and sunset chasers looking for wild scenery."}},
+    { id:24, name:{ja:"柑子岳",en:"Mt. Kojidake"}, place:"展望台・山頂", features:["海が見える","大自然を感じる"], distance:5.8, desc:{ja:"糸島半島東部にある標高254メートルの低山。地元の方々に愛されるハイキングコースで、登山道を30分ほど歩くと、博多湾や糸島半島のパノラマ絶景が広がります。",en:"A mountain easy to climb at 254m, yet offering panoramic views of Hakata Bay and the Itoshima Peninsula. A beloved local hiking trail with refreshing nature."}},
+    { id:25, name:{ja:"おやつモダン花野季",en:"Onyatsu Modern Hananoki"}, place:"古民家カフェ・レストラン", features:["写真映えする","駐車場あり"], distance:8.3, desc:{ja:"緑に囲まれた和モダンな古民家で和洋スイーツを楽しめるカフェ。地元の旬の素材を活かした素朴で心温まるおやつを提供しています。",en:"A cafe offering Japanese-Western fusion sweets in a renovated traditional house surrounded by greenery, utilizing fresh local seasonal ingredients."}},
+    { id:26, name:{ja:"糸島ハイドアウトカフェ",en:"Itoshima Hideout Cafe"}, place:"コーヒースタンド・焙煎所", features:["海が見える","Wi-Fi・電源あり"], distance:1.0, desc:{ja:"海の目の前に位置する隠れ家カフェ。波の音を聞きながら、淹れたてのコーヒーや軽食を楽しめ、ノマドワークにも最適です。",en:"A seaside hideout cafe. Listen to the ocean waves while enjoying freshly brewed coffee, light meals, and utilizing Wi-Fi for remote work."}},
+    { id:27, name:{ja:"一貴山窯",en:"Ikisan Kama Pottery"}, place:"クラフト・陶芸工房", features:["伝統文化を体験できる","駐車場あり"], distance:16.5, desc:{ja:"糸島の穏やかな田園地帯にある陶芸工房。手になじむ温もりと、独特の美しい釉薬の風合いが光る器が人気です。",en:"A peaceful workshop in rural Itoshima. Popular for pots and mugs with warm tactile shapes and unique glaze colors that comfortably fit daily life."}},
+    { id:28, name:{ja:"三雲南小路遺跡",en:"Mikumo Ruins"}, place:"歴史スポット・古墳", features:["伝統文化を体験できる","混雑が少ない"], distance:14.5, desc:{ja:"古代「伊都国」の王墓とされる歴史的遺跡。古代史のロマンに満ちており、混雑のない静かな空間で歴史探訪ができます。",en:"A historical site believed to be the royal tombs of the ancient 'Itokoku' state. Full of ancient history and mysteries, away from tourist crowds."}},
+    { id:29, name:{ja:"ひろちゃんカキ（船越漁港）",en:"Hirochan Kaki Oyster Hut"}, place:"カキ小屋", features:["キャッシュレス決済OK","駐車場あり"], distance:9.0, desc:{ja:"船越漁港にある人気のカキ小屋。無添加の自家製ポン酢やトッピングが用意されており、清潔な店内で美味しいカキを満喫できます。",en:"A popular oyster hut at Funakoshi Port. Known for additive-free homemade ponzu sauce and a variety of toppings in a very clean atmosphere."}},
+    { id:30, name:{ja:"瑞梅寺ダム周辺",en:"Zuibeiji Dam Area"}, place:"ハイキング・散策コース", features:["大自然を感じる","混雑が少ない"], distance:18.0, desc:{ja:"雷山の壮麗な麓にある、豊かな緑と青い水面が美しいダム周辺エリア。春の桜、夏の深緑、秋の紅葉など、四季折々の美しい表情を贅沢に楽しめます。",en:"A lush, scenic area centered around a peaceful reservoir at the foot of Mt. Raizan. Cherry blossoms in spring, lush greenery in summer, and red maples in autumn reflect on the water."}},
+    { id:31, name:{ja:"極楽展望台（雷山中腹）",en:"Gokuraku Viewpoint"}, place:"展望台・山頂", features:["大自然を感じる","混雑が少ない"], distance:22.0, desc:{ja:"雷山の中腹に位置し、息を呑むような大パノラマが楽しめる展望所。眼下には広大な糸島平野と深く美しい玄界灘が広がります。",en:"Located halfway up Mt. Raizan, this hidden observation deck yields stunning bird's-eye views of the sprawling Itoshima Plains, the glittering Genkai Sea, and even distant Fukuoka City."}},
+    { id:32, name:{ja:"大入駅近くの海岸",en:"Onyu Station Coast"}, place:"隠れ家ビーチ・海岸", features:["海が見える","混雑が少ない"], distance:21.0, desc:{ja:"JR大入駅から歩いてすぐ、美しい松林に囲まれたとても穏やかで静かなビーチ。観光客はほとんど訪れず、静かに読書や海辺散策をするのに最適です。",en:"A quiet and tranquil beach just a short walk from JR Onyu Station. Virtually untouched by heavy tourism, offering clear shallow waters for peaceful listening to the waves."}},
+    { id:33, name:{ja:"惣次郎窯",en:"Sojiro Kama Pottery"}, place:"クラフト・陶芸工房", features:["伝統文化を体験できる","駐車場あり"], distance:10.5, desc:{ja:"伝統の有田焼などの高度な技法を受け継ぎつつ、糸島独自の温かく素朴な土の風味を活かしたモダンな作品を制作する陶芸工房。",en:"A ceramic studio blending traditional Arita porcelain techniques with contemporary design. Famous for exquisite cobalt-blue hand-painted patterns and warm white porcelain."}},
+    { id:34, name:{ja:"芥屋の大門公園・遊歩道",en:"Keya no Oto Trail"}, place:"ハイキング・散策コース", features:["海が見える","大自然を感じる"], distance:13.0, desc:{ja:"日本最大の玄武洞「芥屋の大門」に隣接。通称『トトロの森』と呼ばれるトンネルを抜けると、遮るものなく青い玄界灘を一望できる展望台へ到達します。",en:"A scenic coastal trail set behind Keya no Oto, Japan's largest basalt cave. The dense forest path nicknamed 'Totoro's Forest' leads hikers to an observatory overlooking the sea."}},
+    { id:35, name:{ja:"潤神社",en:"Uruu Shrine"}, place:"神社・寺院", features:["伝統文化を体験できる","駐車場あり"], distance:11.5, desc:{ja:"糸島市潤に鎮座する由緒ある静かな神社。大きなご神木である白樫が静かに見守る境内は厳かで神聖な雰囲気が漂い、静かな聖地となっています。",en:"A historic and serene local shrine. Possessing a calm atmosphere, it has become a quiet pilgrimage site for fans due to its unique name which shares characters with a famous idol."}},
+    { id:36, name:{ja:"伊都国歴史博物館",en:"Itokoku Museum"}, place:"歴史スポット・古墳", features:["伝統文化を体験できる","雨の日でも楽しめる"], distance:14.5, desc:{ja:"伊都国の最先端歴史を紹介。平原遺跡から出土した国宝に指定されている日本最大の青銅鏡「内行花文鏡」をはじめ、重要文化財の数々を間近に鑑賞できます。",en:"A stellar museum showcasing the heritage of the ancient state of 'Itokoku'. Houses the largest ancient bronze mirror discovered in Japan — a national treasure."}},
+    { id:37, name:{ja:"ベーカリー クラム",en:"Bakery Clumb"}, place:"ベーカリー・パン屋", features:["子供連れにいい","キャッシュレス決済OK"], distance:10.8, desc:{ja:"糸島前原に位置する地元の人々に長年愛され続けている温かいパン屋さん。国産小麦と自家製天然酵母を使用し、無添加のパンやクロワッサンを丁寧に焼き上げています。",en:"A cozy, family-friendly bakery beloved by Maehara locals. Using homemade natural yeast, they offer freshly baked baguettes, flaky croissants, and additive-free savory breads."}},
+    { id:38, name:{ja:"Cafe Inn Rooster",en:"Cafe Inn Rooster"}, place:"古民家カフェ・レストラン", features:["テラス席・屋外あり","駐車場あり"], distance:17.5, desc:{ja:"筑前前原から山麓へ少し入った静寂な森に立つ、ウエスタン＆レトロなアメリカンテイスト漂う素敵な古民家カフェ。豊かな木々に囲まれたテラス席が最高です。",en:"A charming mountain-side cafe in a retro folk-style lodge. Known for its rich drip coffee and hearty hamburger steaks, guests relax on their spacious terrace enveloped by the forest."}},
+    { id:39, name:{ja:"初潮旅館（日帰り入浴）",en:"Hatsushio Ryokan Bath"}, place:"銭湯・日帰り温泉", features:["海が見える","混雑が少ない"], distance:18.0, desc:{ja:"深江海水浴場のすぐ近くに建つ伝統ある和風旅館。その日帰り展望大浴場からは美しい水平線と可也山が一望でき、格別の温泉を満喫できます。",en:"A historic Japanese inn right on Fukae Beach. Their panoramic ocean-view bath is open to day-trippers, offering wide vistas of the Genkai Sea while soaking in soothing warm waters."}},
+    { id:40, name:{ja:"深江海岸 海の家（夏季BBQ）",en:"Fukae Beach BBQ Huts"}, place:"バーベキュー場", features:["海が見える","テラス席・屋外あり"], distance:18.5, desc:{ja:"遠浅で波が非常に穏やか、白い砂浜が自慢の深江海水浴場に立つ海の家。夏の間、開放的な大型テラス席で新鮮魚介を使った豪快なバーベキューを気軽に堪能できます。",en:"Seasonal beach houses along the shallow, gentle waters of Fukae Beach. Offering spacious open-air decks and easy access to seaside BBQs, it's highly popular for families in summer."}},
+    { id:41, name:{ja:"糸島ファームハウス UOVO",en:"Itoshima Farmhouse UOVO"}, place:"ジェラート・スイーツ店", features:["写真映えする","子供連れにいい"], distance:1.5, desc:{ja:"糸島ブランドの有精卵「天上卵」を使用した美味しいエッグタルトやプリン、手作りジェラートを提供する大人気カフェ。広々とした屋外テラスが最高です。",en:"A highly popular dessert spot featuring farm-fresh brand eggs. Known for photogenic egg tarts, rich puddings, and premium gelatos, it offers a vast, relaxing outdoor seating area."}},
+    { id:42, name:{ja:"磯本農園（いちご狩り）",en:"Isomoto Strawberry Farm"}, place:"フルーツ農園・狩り", features:["子供連れにいい","駐車場あり"], distance:5.5, desc:{ja:"ブランドイチゴ「あまおう」を丹精込めて栽培するいちご農園。1月〜5月の間はハウス内で美味しい食べ放題体験ができるほか、直営カフェのパフェが人気です。",en:"An award-winning farm dedicated to Fukuoka's famous 'Amaou' strawberries. From January to May, visitors enjoy strawberry picking. Their cafe serves extravagant strawberry parfaits."}},
+    { id:43, name:{ja:"志登神社",en:"Shito Shrine"}, place:"神社・寺院", features:["混雑が少ない","入場無料・リーズナブル"], distance:10.0, desc:{ja:"志登ののどかな田園風景のただ中に、深く静かに佇む式内社。観光客がほぼ訪れない境内は、神秘的な巨樹巨木が生い茂り、荘厳で心洗われる静寂に満たされます。",en:"A serene, highly historic Shinto shrine standing quietly amidst lush paddy fields. Encircled by colossal ancient trees, this peaceful sanctuary offers an atmosphere of ancient mystery."}},
+    { id:44, name:{ja:"高祖神社",en:"Takasu Shrine"}, place:"神社・寺院", features:["伝統文化を体験できる","混雑が少ない"], distance:12.5, desc:{ja:"高祖山麓の鬱蒼とした深い森に包まれ、1000年以上の歴史を刻む非常に格調高き古社。福岡県無形民俗文化財の神楽が春と秋に奉納されます。",en:"Located at the base of Mt. Takasu, this revered shrine boasts over a millennium of history. Famous for hosting the ancient 'Takasu Kagura' ritual dance, a designated cultural asset."}},
+    { id:45, name:{ja:"加布里天満宮",en:"Kaburi Tenmangu"}, place:"神社・寺院", features:["海が見える","混雑が少ない"], distance:14.0, desc:{ja:"加布里漁港のノドかな町並みを一望する高台に静かに佇む天満宮。境内からは加布里湾の穏やかなエメラルドグリーンの波と可也山（糸島富士）の絵画的パノラマを楽しめます。",en:"Perched on a hill overlooking the peaceful Kaburi Fishing Port. Its breezy grounds look out over the calm waters of Kaburi Bay and majestic Mt. Kaya — a hidden gem view."}},
+    { id:46, name:{ja:"糸島正キ（調味料工房）",en:"Itoshima Masaki Shop"}, place:"お土産・セレクトショップ", features:["写真映えする","キャッシュレス決済OK"], distance:10.2, desc:{ja:"糸島産の新鮮な無農薬野菜を贅沢に使った、無添加の美しい「生ドレッシング」の製造工房兼ブティック。カラフルなボトルは糸島のおいしさが詰まったお土産に最適です。",en:"An artisanal boutique producing hand-crafted, additive-free gourmet dressings using locally sourced vegetables. Their colorful, stylish bottles make for highly sought-after Itoshima souvenirs."}},
+    { id:47, name:{ja:"不動の滝",en:"Fudo Waterfalls"}, place:"滝・渓谷", features:["大自然を感じる","混雑が少ない"], distance:21.0, desc:{ja:"雷山千如寺大悲王院のすぐ近く、竹林の静かな小道を5分ほど進んだ奥に現れる美しい隠れ滝。ひんやりとした静寂と神聖な修行場の空気感を体験できます。",en:"A secluded waterfall nestled near Mt. Raizan's Sennyoji Temple. Accessed via a short walk through a bamboo grove, the falls cascade down a rocky cliff in a deeply spiritual sanctuary."}},
+    { id:48, name:{ja:"志摩の四季",en:"Shima no Shiki Market"}, place:"地元の直売所・道の駅", features:["駐車場あり","伝統文化を体験できる"], distance:9.0, desc:{ja:"糸島最大の賑わいを見せる、朝獲れ魚介と産直野菜の大型販売所。毎朝届けられる食材は極めて新鮮で、併設食堂で提供される名物「海鮮丼」は行列必須の美味しさです。",en:"One of Itoshima's largest and most famous local markets. Overflowing with ultra-fresh daily seafood, farm vegetables, and local premium goods. Their seafood rice bowl at the diner is legendary."}},
+    { id:49, name:{ja:"筑前前原のローカル食堂",en:"Maehara Local Diners"}, place:"居酒屋・ローカル食堂", features:["地元の人と交流できる","入場無料・リーズナブル"], distance:11.2, desc:{ja:"筑前前原駅の周辺、昭和レトロの面影を残す小路に佇む大衆食堂。数十年にわたり味を守る温かい店主が、糸島うどんや定食などリーズナブルに提供しています。",en:"Scattered around Maehara's retro streets, these heartwarming local diners serve beloved budget-friendly comfort food like Tonkotsu ramen, hand-cut udon noodles, and daily sets."}},
+    { id:50, name:{ja:"LASPARK RESORTキャンプエリア",en:"Laspark Resort Camp"}, place:"キャンプ・グランピング場", features:["海が見える","写真映えする"], distance:1.2, desc:{ja:"志摩桜井に位置する、目の前いっぱいに輝くコバルトブルーの海が広がる巨大な複合リゾート。ラグジュアリーなドームテントでのグランピング、本格的なガスグリルBBQなどが楽しめます。",en:"A luxury oceanfront resort along the vast Shima-Sakurai beach. Offering premium glamping and state-of-the-art BBQ setups, guests enjoy spectacular views of the blue ocean in style."}}
+  ];
+
+  const placeTags = [
+    {ja:"カキ小屋",en:"Oyster Huts"},{ja:"古民家カフェ・レストラン",en:"Traditional House Cafes"},
+    {ja:"クラフト・陶芸工房",en:"Artisan & Pottery Workshops"},{ja:"滝・渓谷",en:"Waterfalls & Gorges"},
+    {ja:"展望台・山頂",en:"Viewpoints & Summits"},{ja:"歴史スポット・古墳",en:"Historical Sites & Tumuli"},
+    {ja:"地元の直売所・道の駅",en:"Local Farmer's Markets"},{ja:"隠れ家ビーチ・海岸",en:"Hidden Beaches"},
+    {ja:"ベーカリー・パン屋",en:"Local Bakeries"},{ja:"居酒屋・ローカル食堂",en:"Izakaya & Local Diners"},
+    {ja:"キャンプ・グランピング場",en:"Campsites & Glamping"},{ja:"フルーツ農園・狩り",en:"Fruit Farms"},
+    {ja:"神社・寺院",en:"Shrines & Temples"},{ja:"バーベキュー場",en:"BBQ Spots"},
+    {ja:"お土産・セレクトショップ",en:"Souvenir & Craft Shops"},{ja:"コーヒースタンド・焙煎所",en:"Coffee Roasters"},
+    {ja:"ジェラート・スイーツ店",en:"Gelato & Sweet Shops"},{ja:"ハイキング・散策コース",en:"Hiking Trails"},
+    {ja:"サンセットスポット",en:"Sunset Viewpoints"},{ja:"銭湯・日帰り温泉",en:"Hot Springs & Public Baths"}
+  ];
+
+  const featureTags = [
+    {ja:"海が見える",en:"Ocean View"},{ja:"混雑が少ない",en:"Off the Beaten Path / Quiet"},
+    {ja:"英語メニュー・対応あり",en:"English Friendly"},{ja:"キャッシュレス決済OK",en:"Credit Card / Cashless"},
+    {ja:"写真映えする",en:"Photogenic / Insta-worthy"},{ja:"子供連れにいい",en:"Kid-Friendly"},
+    {ja:"テラス席・屋外あり",en:"Outdoor Seating"},{ja:"レンタサイクルで行ける",en:"Accessible by Bicycle"},
+    {ja:"地元の人と交流できる",en:"Meet the Locals"},{ja:"伝統文化を体験できる",en:"Cultural Experience"},
+    {ja:"ヴィーガン・ベジタリアン対応",en:"Vegan / Vegetarian Options"},{ja:"ハラール対応",en:"Halal Friendly"},
+    {ja:"Wi-Fi・電源あり",en:"Wi-Fi & Power Outlets"},{ja:"駐車場あり",en:"Parking Available"},
+    {ja:"大自然を感じる",en:"Deep Nature"},{ja:"朝早くから営業",en:"Open from Early Morning"},
+    {ja:"夜遅くまで営業",en:"Open Late / Nightlife"},{ja:"ペット同伴OK",en:"Pet-Friendly"},
+    {ja:"雨の日でも楽しめる",en:"Rainy Day Friendly"},{ja:"入場無料・リーズナブル",en:"Budget-Friendly / Free Entry"}
+  ];
+
+  const translations = {
+    en: {
+      title:"TABito", subtitle:"Discover Itoshima's secret local spots away from tourist crowds.",
+      whereToGo:"Where to go (Places · OR)", whatToExperience:"What to experience (Features · OR)",
+      spotsFound:"Hidden Gems Found", resetFilters:"Clear All",
+      noResults:"Sorry, no spots match your criteria.\nTry clearing filters or checking other combinations!",
+      mapBtn:"Open in Google Maps", totalSpots:"50 Hidden Spots",
+      footerText:"TABito — Sustainable Travel & Local Discoveries"
+    },
+    ja: {
+      title:"TABito", subtitle:"観光ガイドに載らない糸島の穴場を発見する",
+      whereToGo:"どこへ行く？（場所・OR）", whatToExperience:"何を体験する？（特徴・OR）",
+      spotsFound:"件のスポットが見つかりました", resetFilters:"すべてクリア",
+      noResults:"申し訳ありませんが、条件に合致するスポット情報がありません。\n条件を変えてもう一度お試しください。",
+      mapBtn:"Google マップで見る", totalSpots:"全50か所の穴場スポット",
+      footerText:"TABito — 糸島の持続可能な観光"
+    }
+  };
+
+  const { createApp, ref, computed } = Vue;
+  createApp({
+    setup() {
+      const lang = ref('en');
+      const selectedPlaces = ref([]);
+      const selectedFeatures = ref([]);
+      const sheetOpen = ref(false);
+      const spots = ref(rawSpots);
+
+      const setLanguage = (l) => { lang.value = l; document.documentElement.lang = l; };
+      const t = (key) => translations[lang.value][key] || key;
+      const getTagName = (tagObj) => lang.value === 'en' ? tagObj.en : tagObj.ja;
+      const getTagTranslation = (ja) => lang.value === 'ja' ? ja : (tagMappings[ja] || ja);
+
+      const getGoogleMapsUrl = (spot) => {
+        let query = spot.name.ja;
+        const overrides = {
+          "筑前前原駅前のローカル居酒屋":"筑前前原駅 居酒屋",
+          "筑前前原のローカル食堂":"筑前前原 食堂",
+          "深江海岸 海の家（夏季BBQ）":"深江海岸 海の家",
+          "引津湾の夕日スポット":"引津湾",
+          "瑞梅寺ダム周辺":"瑞梅寺ダム",
+          "大入駅近くの海岸":"大入駅 海岸",
+          "極楽展望台（雷山中腹）":"極楽展望台 雷山"
+        };
+        if (overrides[query]) query = overrides[query];
+        if (!query.includes("糸島")) query += " 糸島";
+        return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(query);
+      };
+
+      const filteredSpots = computed(() => {
+        return spots.value
+          .filter(s => {
+            const matchPlace = selectedPlaces.value.length === 0 || selectedPlaces.value.includes(s.place);
+            const matchFeature = selectedFeatures.value.length === 0 || s.features.some(f => selectedFeatures.value.includes(f));
+            return matchPlace && matchFeature;
+          })
+          .sort((a, b) => a.distance - b.distance);
+      });
+
+      const totalSelected = computed(() => selectedPlaces.value.length + selectedFeatures.value.length);
+
+      const getPreviewCountForPlace = (name) => {
+        const temp = [...selectedPlaces.value];
+        const idx = temp.indexOf(name);
+        idx > -1 ? temp.splice(idx, 1) : temp.push(name);
+        return spots.value.filter(s => {
+          const mp = temp.length === 0 || temp.includes(s.place);
+          const mf = selectedFeatures.value.length === 0 || s.features.some(f => selectedFeatures.value.includes(f));
+          return mp && mf;
+        }).length;
+      };
+
+      const getPreviewCountForFeature = (name) => {
+        const temp = [...selectedFeatures.value];
+        const idx = temp.indexOf(name);
+        idx > -1 ? temp.splice(idx, 1) : temp.push(name);
+        return spots.value.filter(s => {
+          const mp = selectedPlaces.value.length === 0 || selectedPlaces.value.includes(s.place);
+          const mf = temp.length === 0 || s.features.some(f => temp.includes(f));
+          return mp && mf;
+        }).length;
+      };
+
+      const togglePlace = (ja) => {
+        const idx = selectedPlaces.value.indexOf(ja);
+        idx > -1 ? selectedPlaces.value.splice(idx, 1) : selectedPlaces.value.push(ja);
+      };
+      const toggleFeature = (ja) => {
+        const idx = selectedFeatures.value.indexOf(ja);
+        idx > -1 ? selectedFeatures.value.splice(idx, 1) : selectedFeatures.value.push(ja);
+      };
+      const resetAll = () => { selectedPlaces.value = []; selectedFeatures.value = []; sheetOpen.value = false; };
+
+      return { lang, selectedPlaces, selectedFeatures, sheetOpen, placeTags, featureTags,
+        filteredSpots, totalSelected, setLanguage, t, getTagName, getTagTranslation,
+        getPreviewCountForPlace, getPreviewCountForFeature, togglePlace, toggleFeature,
+        resetAll, getGoogleMapsUrl };
+    }
+  }).mount('#app');
+</script>
+</body>
+</html>
